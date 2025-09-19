@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Eliminar Usuario</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='eliminar_usuario.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Eliminar Usuario</h2>
+        <p class="warning">¿Estás seguro de que deseas eliminar este usuario?</p>
+
+        <div class="user-info">
+            <p><strong>Nombre:</strong> {{ usuario.nombre }}</p>
+            <p><strong>Correo:</strong> {{ usuario.correo }}</p>
+            <p><strong>Edad:</strong> {{ usuario.edad }}</p>
+        </div>
+
+        <form method="POST">
+            <button type="submit" class="delete-btn">Eliminar Usuario</button>
+            <a href="{{ url_for('dashboard') }}" class="btn cancel-btn">Cancelar</a>
+        </form>
+
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <div class="flash">{{ messages[0] }}</div>
+          {% endif %}
+        {% endwith %}
+    </div>
+</body>
+</html>

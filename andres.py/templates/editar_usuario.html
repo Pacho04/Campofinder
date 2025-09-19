@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Usuario</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='editar_usuario.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Editar Usuario</h2>
+        <form method="POST">
+            <input type="text" name="nombre" value="{{ usuario.nombre }}" required>
+            <input type="email" name="correo" value="{{ usuario.correo }}" required>
+            <input type="number" name="edad" value="{{ usuario.edad }}" required>
+            <input type="password" name="contraseña" placeholder="Nueva contraseña" required>
+            <button type="submit">Actualizar</button>
+        </form>
+        <a href="{{ url_for('dashboard') }}" class="btn">Volver</a>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <div class="flash">{{ messages[0] }}</div>
+          {% endif %}
+        {% endwith %}
+    </div>
+</body>
+</html>
