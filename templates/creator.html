@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Creator - Gestión de usuarios</h1>
+<p>Desde esta página un administrador puede bloquear/desbloquear, editar, cambiar contraseña o eliminar usuarios.</p>
+
+<table border="1" cellpadding="8" style="width:100%; border-collapse: collapse;">
+  <thead>
+    <tr><th>ID</th><th>Nombre</th><th>Correo</th><th>Rol</th><th>Acciones</th></tr>
+  </thead>
+  <tbody>
+    {% for u in users %}
+      <tr>
+        <td>{{ u.id }}</td>
+        <td>{{ u.nombre }}</td>
+        <td>{{ u.correo }}</td>
+        <td>{{ u.rol }}</td>
+        <td>
+          {% if u.id|string in blocked %}
+            <form method="post" action="{{ url_for('admin.admin_user_unblock') }}" style="display:inline">
+              <input type="hidden" name="user_id" value="{{ u.id }}">
+              <button type="submit">Desbloquear</button>
+            </form>
+          {% else %}
+            <form method="post" action="{{ url_for('admin.admin_user_block') }}" style="display:inline">
+              <input type="hidden" name="user_id" value="{{ u.id }}">
+              <button type="submit">Bloquear</button>
+            </form>
+          {% endif %}
+
+          <form method="post" action="{{ url_for('admin.admin_user_delete') }}" style="display:inline" onsubmit="return confirm('¿Eliminar usuario?');">
+            <input type="hidden" name="user_id" value="{{ u.id }}">
+            <button type="submit">Eliminar</button>
+          </form>
+
+          <details style="display:inline">
+            <summary>Editar</summary>
+            <form method="post" action="{{ url_for('admin.admin_user_update') }}">
+              <input type="hidden" name="user_id" value="{{ u.id }}">
+              <input name="nombre" placeholder="Nombre" value="{{ u.nombre }}">
+              <input name="correo" placeholder="Correo" value="{{ u.correo }}">
+              <select name="rol">
+                <option value="usuario" {% if u.rol=='usuario' %}selected{% endif %}>Usuario</option>
+                <option value="administrador" {% if u.rol=='administrador' %}selected{% endif %}>Administrador</option>
+              </select>
+              <button type="submit">Guardar</button>
+            </form>
+          </details>
+
+          <details style="display:inline">
+            <summary>Cambiar contraseña</summary>
+            <form method="post" action="{{ url_for('admin.admin_user_change_password') }}">
+              <input type="hidden" name="user_id" value="{{ u.id }}">
+              <input type="password" name="new_password" placeholder="Nueva contraseña">
+              <button type="submit">Cambiar</button>
+            </form>
+          </details>
+        </td>
+      </tr>
+    {% else %}
+      <tr><td colspan="5">No hay usuarios</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

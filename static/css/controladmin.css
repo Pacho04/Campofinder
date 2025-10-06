@@ -1,0 +1,286 @@
+/* Base de estilo deportivo / claro / glassmorphism */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    /* Fondo CLARO con gradiente suave verde */
+    background: linear-gradient(135deg, #e0ffe0 0%, #a8e0a8 100%);
+    min-height: 100vh;
+    color: #333; /* Color de texto oscuro para fondo claro */
+    padding: 20px;
+}
+
+/* -------------------- Contenedores Glassmorphism -------------------- */
+.header, .cancha-info, .cronometro-section, .horarios-section, .marcador-section {
+    /* Efecto Glassmorphism CLARO */
+    background: rgba(255, 255, 255, 0.9); /* Transparencia alta */
+    border: 1px solid rgba(0, 0, 0, 0.1); /* Borde suave */
+    backdrop-filter: blur(12px);
+    border-radius: 18px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1); /* Sombra oscura y suave */
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 25px;
+    margin-bottom: 35px;
+}
+
+.logo { 
+    font-size: 26px; 
+    font-weight: 700; 
+    color: #007bff; /* Azul brillante como color primario */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-shadow: 0 0 2px rgba(0, 123, 255, 0.3); /* Sombra suave para destacar */
+}
+
+.container { max-width: 1400px; margin: 0 auto; }
+
+/* Contenedor de la información de la cancha */
+.cancha-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    padding: 30px;
+    margin-bottom: 35px;
+}
+
+.cancha-imagen img {
+    width: 100%;
+    height: 320px;
+    object-fit: cover;
+    border-radius: 15px;
+}
+
+.cancha-detalles h1 {
+    font-size: 30px;
+    margin-bottom: 15px;
+    color: #007bff; /* Azul primario */
+}
+
+.cancha-detalles p { 
+    font-size: 16px; 
+    line-height: 1.6; 
+    margin-bottom: 20px; 
+    color: #555;
+}
+
+.precio {
+    background: linear-gradient(45deg, #ff6b6b, #ee5a52); /* Gradiente rojo */
+    padding: 15px 25px;
+    border-radius: 15px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: white; /* Texto blanco en gradiente oscuro */
+    box-shadow: 0 4px 12px rgba(255,0,0,0.2);
+}
+
+/* Contenido principal (Cronómetro, Horarios, Marcador) */
+.main-content {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+}
+
+.cronometro-section, .horarios-section, .marcador-section {
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+}
+
+.cronometro-section {
+    flex-grow: 1; 
+}
+
+.marcador-section {
+    border: 2px solid rgba(255, 193, 7, 0.5); /* Borde amarillo más visible */
+    background: rgba(255, 255, 255, 0.9); /* Fondo blanco (mismo glassmorphism) */
+}
+
+.section-title {
+    font-size: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: 600;
+    color: #111; /* Oscuro */
+}
+
+.marcador-title {
+    color: #ffc107; /* Amarillo/Dorado */
+    text-shadow: none;
+}
+
+/* Estilo del display del tiempo */
+.tiempo-display {
+    font-size: 3rem;
+    text-align: center;
+    font-family: 'Courier New', monospace;
+    margin-bottom: 20px;
+    /* Texto oscuro en fondo claro */
+    color: #000; 
+    font-weight: 700;
+}
+
+.controles {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: white; /* Texto blanco en botones de color */
+    font-size: 14px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+    min-width: 100px; 
+}
+
+.btn-iniciar { background: linear-gradient(45deg, #28a745, #20c997); } /* Verde */
+.btn-pausar { background: linear-gradient(45deg, #ffc107, #fd7e14); } /* Naranja/Amarillo */
+.btn-reiniciar { background: linear-gradient(45deg, #dc3545, #e74c3c); } /* Rojo */
+.btn-marcador { background: linear-gradient(45deg, #007bff, #0056b3); } /* Azul */
+
+.btn.btn-secundario {
+    background: linear-gradient(45deg, #5c6773, #343a40); 
+    color: white;
+}
+
+.btn:hover { transform: translateY(-2px) scale(1.05); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* Estilos de Horarios */
+.horarios-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 5px; 
+}
+
+.horario {
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.05); /* Fondo muy claro */
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.3s;
+    border: 2px solid transparent;
+    font-size: 12px;
+    font-weight: 500;
+    color: #333; /* Texto oscuro */
+}
+
+.horario-info {
+    display: block;
+    font-size: 10px;
+    color: #777;
+    margin-top: 2px;
+}
+
+.horario.disponible { border-color: #28a745; }
+.horario.ocupado { 
+    border-color: #dc3545; 
+    background: rgba(220, 53, 69, 0.1); /* Fondo rojo muy suave */
+    cursor: not-allowed; 
+    opacity: 0.8;
+    color: #dc3545;
+}
+.horario.seleccionado { 
+    background: linear-gradient(45deg, #28a745, #20c997); 
+    border-color: #28a745;
+    color: white;
+}
+.horario.disponible:hover { 
+    background: rgba(40, 167, 69, 0.1); 
+}
+
+/* Estilos de Marcador */
+.marcador-display {
+    background: rgba(0, 0, 0, 0.05); /* Fondo muy claro */
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.equipos {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.equipo-nombre {
+    flex: 1;
+    padding: 0 10px;
+}
+
+.equipo-nombre input {
+    background: transparent;
+    border: none;
+    color: #333; /* Texto oscuro */
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+    outline: none;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+    padding: 5px;
+    transition: border-bottom-color 0.3s;
+}
+
+.equipo-nombre input:focus {
+    border-bottom-color: #ffc107;
+}
+
+.score {
+    font-size: 3rem;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    color: #000;
+}
+
+.vs {
+    font-size: 24px;
+    color: #ffc107;
+    font-weight: bold;
+    padding: 0 10px;
+}
+
+.btn-score-control {
+    display: flex;
+    justify-content: space-around;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .main-content { grid-template-columns: 1fr; }
+    .cancha-info { grid-template-columns: 1fr; }
+    .cancha-imagen img { height: 250px; }
+    .cancha-detalles { order: -1; } 
+    .cronometro-section { order: 2; }
+    .horarios-section { order: 1; }
+    .marcador-section { order: 3; }
+}
+
+@media (max-width: 480px) {
+    .tiempo-display { font-size: 2.5rem; }
+    .score { font-size: 2.5rem; }
+    .header { padding: 10px 15px; }
+    .logo { font-size: 22px; }
+}

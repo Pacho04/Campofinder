@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registrar Cancha - Campofinder</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+        /* PALETA DE COLORES (Tomada de catalogo_canchas_template.html) */
+        :root {
+            --color-primary: #4CAF50;    /* Verde amigable para botones */
+            --color-secondary: #37474F;  /* Azul oscuro suave para texto principal */
+            --color-background: #F4F6F8; /* Gris/Blanco muy suave */
+            --color-card-bg: white;
+            --color-border: #E0E0E0;     /* Borde muy sutil */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-background);
+            margin: 0;
+            padding: 20px;
+            color: var(--color-secondary);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Alineación al inicio para formularios */
+            min-height: 100vh;
+        }
+
+        /* Contenedor del formulario (similar a las tarjetas) */
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background-color: var(--color-card-bg);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: var(--color-secondary);
+            border-bottom: 2px solid var(--color-border);
+            padding-bottom: 10px;
+            margin-top: 0;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--color-secondary);
+            font-size: 1rem;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="file"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            font-size: 1rem;
+            box-sizing: border-box; /* Asegura que el padding no cambie el ancho */
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        textarea:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3);
+            outline: none;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        /* Estilo específico para el input[type="file"] */
+        input[type="file"] {
+            border: 2px dashed var(--color-border);
+            padding: 15px;
+            cursor: pointer;
+            background-color: #F8F8F8;
+        }
+
+        /* Botón de envío (btn btn-primary) */
+        .btn-primary {
+            display: block;
+            width: 100%;
+            text-align: center;
+            padding: 14px 20px;
+            background-color: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+            box-shadow: 0 4px 6px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-primary:hover {
+            background-color: #43A047;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                border-radius: 10px;
+            }
+            h2 {
+                font-size: 1.5rem;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Registrar Cancha</h2>
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="nombre">Nombre de la cancha:</label>
+                <input type="text" id="nombre" name="nombre" required>
+            </div>
+            
+            <!-- NUEVO CAMPO: PRECIO (type="number") -->
+            <div class="form-group">
+                <label for="precio">Precio por hora (USD/COP):</label>
+                <input type="number" id="precio" name="precio" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label for="descripcion">Descripción:</label>
+                <textarea id="descripcion" name="descripcion" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="imagen">Imagen:</label>
+                <input type="file" id="imagen" name="imagen" accept="image/*" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Registrar Cancha</button>
+        </form>
+    </div>
+</body>
+</html>

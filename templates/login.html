@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Iniciar Sesión - Campofinder</title>
+<!-- Enlace al CSS externo -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+<style>
+/* Estilos básicos para asegurar que los mensajes Flash sean visibles */
+.flash-messages {
+margin-top: 20px;
+width: 100%;
+text-align: center;
+}
+.alert {
+padding: 10px;
+margin-bottom: 15px;
+border-radius: 8px;
+font-weight: bold;
+}
+.alert-success {
+background-color: #d4edda;
+color: #155724;
+border: 1px solid #c3e6cb;
+}
+.alert-danger {
+background-color: #f8d7da;
+color: #721c24;
+border: 1px solid #f5c6cb;
+}
+</style>
+</head>
+<body>
+<div class="floating-shapes">
+<div class="shape"></div>
+<div class="shape"></div>
+<div class="shape"></div>
+</div>
+
+<div class="main-container">
+    <div class="logo-section">
+        <div class="logo-image">
+            <img src="{{ url_for('static', filename='imagenes/logo1.png') }}" alt="Logo Campofinder">
+        </div>
+        <div class="logo">
+            <h1>Campofinder</h1>
+            <p>Encuentra tu cancha perfecta</p>
+        </div>
+    </div>
+
+    <div class="forms-wrapper">
+        <div class="login-card">
+            <h2 class="form-title">Iniciar Sesión</h2>
+                  <form method="POST" action="{{ url_for('auth.login') }}">
+                <div class="form-group">
+                    <label for="correo">Correo Electrónico</label>
+                    <div class="input-wrapper">
+                        <input type="email" id="correo" name="correo" placeholder="ejemplo@correo.com" required autocomplete="email">
+                        <span class="input-icon">📧</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="contraseña">Contraseña</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="contraseña" name="contraseña" placeholder="••••••••" required autocomplete="current-password">
+                        <span class="input-icon">🔒</span>
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn">Iniciar Sesión</button>
+                <div class="forgot-password">
+                <a href="#">¿Olvidaste tu contraseña?</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Mensajes flash MOVIDOS aquí, fuera del forms-wrapper, para máxima visibilidad -->
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Botones de navegación -->
+    <div style="text-align: center; margin-top: 30px; width: 100%;">
+      <a href="{{ url_for('main.index') }}" class="back-btn">Volver al inicio</a>
+   <a href="{{ url_for('auth.register') }}" class="register-btn">Crear cuenta nueva</a>
+    </div>
+</div>
+
+</body>
+</html>

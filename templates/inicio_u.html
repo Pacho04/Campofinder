@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio - Campofinder</title>
+    <!-- Incluyendo Tailwind CSS para un estilo moderno y responsivo -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/inicio_u.css') }}">
+<body>
+    <header class="header">
+        <!-- Reemplazado por un marcador de posición de imagen, ya que la URL proporcionada no es un recurso público -->
+        <div class="logo">Campofinder</div>
+        <h2>Bienvenido, Usuario</h2>
+        <a href="/logout" class="logout-btn">Cerrar Sesión</a>
+    </header>   
+
+    <div class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="profile-section">
+                <div class="profile-image-container">
+                    <img id="profile-img" src="https://via.placeholder.com/120/12e98f/ffffff?text=👤" alt="Perfil" class="profile-image">
+                </div>
+            </div>
+
+            <nav class="menu-section">
+                <div class="menu-title">Perfil</div>
+                <div class="menu-item">
+                    <div class="menu-btn" onclick="toggleEditMenu()">
+                        <span>⚙️</span>
+                        <span>Editar Perfil</span>
+                        <span style="margin-left: auto;" id="dropdown-arrow">▼</span>
+                    </div>
+                    <div id="edit-dropdown" class="dropdown-menu">
+                        <div class="dropdown-item" onclick="showSection('edit-form')"><span>✏️</span><span>Modificar Datos</span></div>
+                        <div class="dropdown-item" onclick="showSection('edit-form'); document.getElementById('image-input').click();"><span>📷</span><span>Cambiar Foto</span></div>
+                        <div class="dropdown-item" onclick="showSection('edit-form'); document.getElementById('contraseña').focus();"><span>🔐</span><span>Cambiar Contraseña</span></div>
+                        <div class="dropdown-item danger" onclick="confirmDelete()"><span>🗑️</span><span>Eliminar Cuenta</span></div>
+                    </div>
+                </div>
+
+                <div class="menu-title" style="margin-top: 30px;">Navegación</div>
+                <div class="menu-item">
+                    <a href="#" class="menu-btn active" onclick="showSection('welcome-section')"><span>🏠</span><span>Inicio</span></a>
+                </div>
+                <div class="menu-item">
+                    <a href="/catalogo" class="menu-btn"><span>🏟️</span><span>Catálogo de Canchas</span></a>
+                </div>
+                <div class="menu-item">
+                    <a href="#" class="menu-btn" onclick="showSection('reservations-section')">
+                        <span>📅</span>
+                        <span>Mis Reservas</span>
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a href="#" class="menu-btn" onclick="showSection('favorites-section')"><span>⭐</span><span>Favoritos</span></a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Área de contenido principal -->
+        <main class="content-area">
+            <section id="welcome-section" class="content-section active">
+                <h1 class="welcome-title">¡Bienvenido, Usuario!</h1>
+                <p class="welcome-subtitle">
+                    Estás listo para encontrar la cancha perfecta para tu próximo partido. 
+                    Explora nuestro catálogo, gestiona tus reservas y disfruta del mejor fútbol.
+                </p>
+                
+                <div class="cards-grid">
+                    <div class="info-card">
+                        <div class="card-header">
+                            <div class="card-icon">🏟️</div>
+                            <div class="card-title">Explorar Canchas</div>
+                        </div>
+                        <div class="card-content">
+                            Descubre más de 10 canchas disponibles en tu área. Encuentra la perfecta para tu próximo partido.
+                        </div>
+                        <div class="card-actions">
+                            <a href="/catalogo" class="card-btn">Ver Catálogo</a>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="card-header">
+                            <div class="card-icon">📅</div>
+                            <div class="card-title">Reservar</div>
+                        </div>
+                        <div class="card-content">
+                            Reserva tu cancha favorita de forma rápida y sencilla. Disponibilidad en tiempo real.
+                        </div>
+                        <div class="card-actions">
+                            <a href="/reserva" class="card-btn">Reservar Ahora</a>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="card-header">
+                            <div class="card-icon">⭐</div>
+                            <div class="card-title">Favoritos</div>
+                        </div>
+                        <div class="card-content">
+                            Guarda tus canchas preferidas para acceder a ellas rápidamente cuando quieras jugar.
+                        </div>
+                        <div class="card-actions">
+                            <a href="#" class="card-btn" onclick="showSection('favorites-section')">Ver Favoritos</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Favoritos -->
+            <section id="favorites-section" class="content-section">
+                <h2 class="section-title">⭐ Mis Canchas Favoritas</h2>
+                <div id="favorites-container" class="favorites-grid">
+                    <!-- Cards de favoritos se insertarán aquí dinámicamente -->
+                </div>
+            </section>
+
+            <!-- Reservas -->
+            <section id="reservations-section" class="content-section">
+                <h2 class="section-title">📅 Mis Reservas</h2>
+                <div id="reservations-container" class="reservations-grid">
+                    <!-- Cards de reservas se insertarán aquí dinámicamente -->
+                </div>
+            </section>
+
+            <!-- Formulario edición -->
+            <section id="edit-form" class="content-section">
+                <h2 class="section-title">✏️ Editar Perfil</h2>
+                <form onsubmit="return false;"> <!-- Prevent form submission for this demo -->
+                    <div class="info-card">
+                        <div class="image-upload-section">
+                            <h3 style="margin-bottom: 15px;">📷 Cambiar Foto de Perfil</h3>
+                            <input type="file" id="image-input" name="imagen" accept="image/*" style="display: none;" onchange="previewImage(this)">
+                            <button type="button" class="upload-btn" onclick="document.getElementById('image-input').click()">Seleccionar Imagen</button>
+                            <div id="image-preview"></div>
+                        </div>
+
+                        <div class="form-group"><label for="nombre">👤 Nombre Completo</label><input type="text" id="nombre" name="nombre" value="Usuario de Prueba" required></div>
+                        <div class="form-group"><label for="correo">📧 Correo Electrónico</label><input type="email" id="correo" name="correo" value="usuario@ejemplo.com" required></div>
+                        <div class="form-group"><label for="edad">🎂 Edad</label><input type="number" id="edad" name="edad" value="25" min="13" max="100" required></div>
+                        <div class="form-group"><label for="contraseña">🔐 Nueva Contraseña (opcional)</label><input type="password" id="contraseña" name="contraseña" placeholder="Dejar vacío para mantener la actual"></div>
+
+                        <button type="submit" class="submit-btn">💾 Actualizar Perfil</button>
+                    </div>
+                </form>
+            </section>
+                    <!-- Sección Eliminar Cuenta integrada -->
+                    <section id="delete-account" class="content-section">
+                        <h2 class="section-title">🗑️ Eliminar Cuenta</h2>
+                        <div class="info-card">
+                            <p>Si eliminas tu cuenta, se borrarán tus reservas y datos personales. Esta acción no se puede deshacer.</p>
+                            <form method="POST" action="/eliminar_cuenta">
+                                <label for="confirm_delete">Escribe DELETE para confirmar:</label>
+                                <input type="text" id="confirm_delete" name="confirm_delete" placeholder="DELETE" required>
+                                <div style="margin-top:12px; display:flex; gap:8px;">
+                                    <button type="submit" class="card-btn" style="background:#e53935; color:white; border-radius:8px;">Eliminar Cuenta</button>
+                                    <button type="button" class="card-btn" onclick="showSection('welcome-section')">Cancelar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </section>
+        </main>
+    </div>
+
+    <script>
+        // Dummy data for simulation
+        const dummyFavorites = [
+            { id: 1, nombre: "Cancha de Fútbol El Parque", imagen: "https://placehold.co/400x250/50c878/ffffff?text=Cancha+1", precio: "$45.000/hora" },
+            { id: 2, nombre: "Sintética Los Pinos", imagen: "https://placehold.co/400x250/228B22/ffffff?text=Cancha+2", precio: "$50.000/hora" },
+            { id: 3, nombre: "Cancha La Victoria", imagen: "https://placehold.co/400x250/3cb371/ffffff?text=Cancha+3", precio: "$55.000/hora" }
+        ];
+
+        const dummyReservations = [
+            { id: 1, nombre: "Cancha El Pinar", fecha: "2024-10-25", hora: "19:00", duracion: "1 hora", precio: "$48.000" },
+            { id: 2, nombre: "Sintética Central", fecha: "2024-11-02", hora: "21:00", duracion: "1.5 horas", precio: "$70.000" }
+        ];
+
+        // Store dummy data in localStorage for persistence simulation
+        if (!localStorage.getItem('favorites')) {
+            localStorage.setItem('favorites', JSON.stringify(dummyFavorites));
+        }
+        if (!localStorage.getItem('reservations')) {
+            localStorage.setItem('reservations', JSON.stringify(dummyReservations));
+        }
+
+        let editMenuOpen = false;
+
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (editMenuOpen) {
+                toggleEditMenu();
+            }
+            
+            // Highlight the active menu item
+            const menuButtons = document.querySelectorAll('.menu-btn');
+            menuButtons.forEach(btn => btn.classList.remove('active'));
+            const activeLink = document.querySelector(`.menu-item a[onclick="showSection('${sectionId}')"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+        }
+
+        function toggleEditMenu() {
+            const dropdown = document.getElementById('edit-dropdown');
+            const arrow = document.getElementById('dropdown-arrow');
+            editMenuOpen = !editMenuOpen;
+            dropdown.classList.toggle('open', editMenuOpen);
+            arrow.textContent = editMenuOpen ? '▲' : '▼';
+        }
+
+        function confirmDelete() {
+            // Reemplazando `confirm()` con un mensaje en consola ya que no es compatible con el entorno.
+            console.log("⚠️ ¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.");
+            console.log("Acción simulada: se procedería a eliminar la cuenta.");
+            // Aquí iría la lógica para enviar la solicitud de eliminación al servidor.
+        }
+
+        function previewImage(input) {
+            const profileImg = document.getElementById('profile-img');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    profileImg.src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function loadFavorites() {
+            const container = document.getElementById('favorites-container');
+            const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+            
+            container.innerHTML = ''; // Clear existing content
+
+            if (favorites.length === 0) {
+                container.innerHTML = `
+                    <div class="info-card">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">⭐</div>
+                            <h3>No tienes canchas favoritas</h3>
+                            <p>Ve al catálogo y marca tus canchas preferidas con el corazón para verlas aquí.</p>
+                            <div class="card-actions" style="justify-content: center; margin-top: 20px;">
+                                <a href="/catalogo" class="card-btn">Explorar Canchas</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                favorites.forEach(cancha => {
+                    const card = document.createElement('div');
+                    card.className = 'favorite-card';
+                    card.innerHTML = `
+                        <img src="${cancha.imagen}" alt="${cancha.nombre}" class="favorite-image">
+                        <div class="favorite-info">
+                            <div class="favorite-name">${cancha.nombre}</div>
+                            <div class="favorite-price">${cancha.precio}</div>
+                            <div class="card-actions" style="margin-top: 10px;">
+                                <a href="/reserva?cancha=${encodeURIComponent(cancha.nombre)}" class="card-btn">Reservar</a>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            }
+        }
+
+        function loadReservations() {
+            const container = document.getElementById('reservations-container');
+            
+            // Obtener las reservas del servidor
+            fetch('/api/mis-reservas')
+                .then(response => response.json())
+                .then(reservas => {
+                    container.innerHTML = ''; // Limpiar contenido existente
+
+                    if (reservas.length === 0) {
+                        container.innerHTML = `
+                            <div class="info-card">
+                                <div class="empty-state">
+                                    <div class="empty-state-icon">📅</div>
+                                    <h3>No tienes reservas programadas</h3>
+                                    <p>Cuando hagas una reserva, aparecerá aquí con todos los detalles.</p>
+                                    <div class="card-actions" style="justify-content: center; margin-top: 20px;">
+                                        <a href="/catalogo" class="card-btn">Hacer Reserva</a>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        reservas.forEach(reserva => {
+                            const card = document.createElement('div');
+                            card.className = 'reservation-card';
+                            card.innerHTML = `
+                                <div class="reservation-info">
+                                    <div class="reservation-name">${reserva.cancha}</div>
+                                    <div class="reservation-details">Fecha: ${reserva.fecha}</div>
+                                    <div class="reservation-details">Hora: ${reserva.horario}</div>
+                                </div>
+                                <div class="card-actions" style="margin-top:10px;">
+                                    <button class="card-btn" onclick="cancelReserva(${reserva.id}, this)">Cancelar</button>
+                                </div>
+                            `;
+                            container.appendChild(card);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    container.innerHTML = `
+                        <div class="info-card">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">❌</div>
+                                <h3>Error al cargar las reservas</h3>
+                                <p>Por favor, intenta de nuevo más tarde.</p>
+                            </div>
+                        </div>
+                    `;
+                });
+        }
+
+        function cancelReserva(reservaId, btn) {
+            if (!confirm('¿Cancelar esta reserva?')) return;
+            btn.disabled = true;
+            fetch('/api/reservas/cancel', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: reservaId })
+            })
+            .then(r => r.json().then(j => ({status: r.status, body: j})))
+            .then(({status, body}) => {
+                if (status === 200) {
+                    alert('Reserva cancelada');
+                    loadReservations();
+                } else {
+                    alert(body.error || 'Error cancelando reserva');
+                    btn.disabled = false;
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Error de red');
+                btn.disabled = false;
+            });
+        }
+
+        // Actualizar la sección de reservas cuando se realiza una nueva reserva
+        function actualizarReservas(nuevaReserva) {
+            const container = document.getElementById('reservations-container');
+            if (!container) return;
+
+            // Si es la primera reserva, limpiar el mensaje de "no hay reservas"
+            if (container.querySelector('.empty-state')) {
+                container.innerHTML = '';
+            }
+
+            const card = document.createElement('div');
+            card.className = 'reservation-card';
+            card.innerHTML = `
+                <div class="reservation-info">
+                    <div class="reservation-name">${nuevaReserva.cancha}</div>
+                    <div class="reservation-details">Fecha: ${nuevaReserva.fecha}</div>
+                    <div class="reservation-details">Hora: ${nuevaReserva.horario}</div>
+                </div>
+            `;
+            container.insertBefore(card, container.firstChild);
+        }
+
+        // Event listener to handle click outside the edit menu
+        document.addEventListener('click', function(e) {
+            const editMenuBtn = document.querySelector('.menu-btn[onclick="toggleEditMenu()"]');
+            const dropdown = document.getElementById('edit-dropdown');
+            if (editMenuBtn && dropdown && !editMenuBtn.contains(e.target) && !dropdown.contains(e.target) && editMenuOpen) {
+                toggleEditMenu();
+            }
+        });
+
+        // Initial load of content
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFavorites();
+            loadReservations();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio - Campofinder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+            min-height: 100vh;
+        }
+
+        /* Header Moderno */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            padding: 0 2rem;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid #28a745;
+        }
+
+        .header.scrolled {
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            height: 80px;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #28a745;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .center-nav {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(40, 167, 69, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .nav-link:hover::before {
+            left: 100%;
+        }
+
+        .nav-link:hover {
+            color: #28a745;
+            transform: translateY(-2px);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transition: all 0.5s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-login {
+            background: transparent;
+            color: #007bff;
+            border: 2px solid #007bff;
+        }
+
+        .btn-login:hover {
+            background: #007bff;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 123, 255, 0.3);
+        }
+
+        .btn-register {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-register:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+        }
+
+        .login-admin-link {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 80px;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Sección del Mapa - Centrada */
+        .map-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .map-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #28a745;
+        }
+
+        .map-section p {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        .map-container {
+            width: 100%;
+            height: 500px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease;
+        }
+
+        .map-container:hover {
+            transform: scale(1.02);
+        }
+
+        /* Sección de Canchas - Debajo del mapa */
+        .cancha-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            animation: fadeInUp 1s ease;
+        }
+
+        .cancha-section h2 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #28a745;
+        }
+
+        .cancha-section p {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        #canchas-uso {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .cancha-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(40, 167, 69, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cancha-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 3px;
+            background: #28a745;
+            transition: left 0.5s ease;
+        }
+
+        .cancha-card:hover::before {
+            left: 0;
+        }
+
+        .cancha-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(40, 167, 69, 0.2);
+        }
+
+        .cancha-card h3 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .cancha-card p {
+            color: #666;
+            margin-bottom: 0.5rem;
+            text-align: left;
+        }
+
+        .tiempo-restante {
+            background: #007bff;
+            color: white;
+            padding: 0.75rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .btn-reservar {
+            display: block;
+            text-align: center;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            padding: 1rem;
+            border-radius: 10px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-reservar:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            font-size: 1.2rem;
+            color: #28a745;
+        }
+
+        /* About Section */
+        .about-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            animation: fadeInUp 1.2s ease;
+        }
+
+        .about-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .about-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #28a745;
+        }
+
+        .interactive-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(40, 167, 69, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(40, 167, 69, 0.05), rgba(0, 123, 255, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .info-card:hover::before {
+            opacity: 1;
+        }
+
+        .info-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(40, 167, 69, 0.2);
+        }
+
+        .info-card .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Modales mejorados */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        .modal-header {
+            background: #28a745;
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body {
+            padding: 2rem;
+            line-height: 1.8;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Animaciones */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.7);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                height: auto;
+                padding: 1rem 0;
+            }
+
+            .center-nav {
+                margin: 1rem 0;
+                gap: 1rem;
+            }
+
+            .main-content {
+                margin-top: 140px;
+                padding: 1rem;
+            }
+
+            .map-container {
+                height: 300px;
+            }
+
+            #canchas-uso {
+                grid-template-columns: 1fr;
+            }
+
+            .interactive-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header" id="header">
+        <div class="header-container">
+            <div class="logo">Campofinder</div>
+            <nav class="center-nav">
+                <a href="#" class="nav-link">Inicio</a>
+                <a href="#about" class="nav-link" onclick="scrollToAbout()">Quiénes Somos</a>
+                <a href="/catalogo" class="nav-link">Catálogo</a>
+            </nav>
+            <div class="auth-buttons">
+                <a href="/login" class="btn btn-login">Iniciar</a>
+                <a href="/register" class="btn btn-register">Registro</a>
+                    {% if current_user and current_user.is_authenticated and current_user.rol == 'administrador' %}
+                    <a href="{{ url_for('admin.admin_creator') }}" class="btn btn-register" style="background:#2dce89;">Creator</a>
+                    {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <!-- Mapa o contenido destacado -->
+            <section class="map-section">
+                <h2>Encuentra canchas cerca de ti</h2>
+                <p>Visualiza las canchas en el mapa y reserva al instante.</p>
+                <div class="map-container">
+                    <!-- Iframe de mapa (placeholder). Cambia las coordenadas si quieres centrar otro lugar -->
+                    <iframe id="home-map" src="https://www.google.com/maps?q=4.710989,-74.072090&z=13&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                    <!-- Fallback imagen si el iframe no carga rápidamente -->
+                    <img id="map-fallback" src="{{ url_for('static', filename='imagenes/parquecolor.png') }}" alt="Mapa fallback" style="display:none; width:100%; height:100%; object-fit:cover; border-radius:8px;">
+                </div>
+            </section>
+
+            <!-- Sección de canchas: renderizado por servidor, una sola <img> por tarjeta -->
+            <section class="cancha-section">
+                <h2>Cancha en uso</h2>
+                <p>Las canchas que actualmente tienen actividad.</p>
+                <div id="canchas-uso" data-server-rendered="1">
+                    {% if canchas %}
+                        {% for cancha in canchas %}
+                            <div class="cancha-card">
+                                <img src="{{ url_for('static', filename=cancha['imagen_url']|replace(' ', '%20')) }}" alt="{{ cancha['nombre'] }}" style="width:100%; height:180px; object-fit:cover; border-radius:8px; margin-bottom:10px;">
+                                <h3>{{ cancha['nombre'] }}</h3>
+                                <p style="color:#666; margin-bottom:8px;">{{ cancha['descripcion'] }}</p>
+                                <div style="display:flex; gap:8px; margin-top:8px;">
+                                    <a href="/catalogo" class="card-btn">Ver Catálogo</a>
+                                    <a href="/reserva?cancha={{ cancha['nombre'] | urlencode }}" class="card-btn">Reservar</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="info-card">
+                            <div class="empty-state">
+                                <h3>No hay canchas disponibles</h3>
+                                <p>Por favor inténtalo más tarde.</p>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </section>
+
+            <!-- Sección Quiénes Somos -->
+            <section class="about-section" id="about">
+                <div class="about-header">
+                    <h2>🏟️ Quiénes Somos</h2>
+                    <p>Conoce más sobre Campo Finder y nuestro compromiso con el deporte</p>
+                </div>
+                
+                <div class="interactive-cards">
+                    <div class="info-card" onclick="openModal('quienes')">
+                        <div class="icon">👥</div>
+                        <h3>Nuestro Equipo</h3>
+                        <p>Desarrolladores, diseñadores y entusiastas del deporte comprometidos con la innovación deportiva.</p>
+                    </div>
+                    
+                    <div class="info-card" onclick="openModal('problema')">
+                        <div class="icon">💡</div>
+                        <h3>¿Por Qué Nacimos?</h3>
+                        <p>Solucionamos la dificultad para reservar canchas desde el celular con información clara y actualizada.</p>
+                    </div>
+                    
+                    <div class="info-card" onclick="openModal('objetivos')">
+                        <div class="icon">🎯</div>
+                        <h3>Nuestros Objetivos</h3>
+                        <p>Centralizar información de canchas deportivas en una plataforma digital accesible desde cualquier dispositivo.</p>
+                    </div>
+                    
+                    <div class="info-card" onclick="openModal('proyecto')">
+                        <div class="icon">🚀</div>
+                        <h3>Proyecto Inicial</h3>
+                        <p>Una plataforma digital que revoluciona la manera en que las personas acceden a espacios deportivos.</p>
+                    </div>
+                    
+                    <div class="info-card" onclick="openModal('conclusion')">
+                        <div class="icon">🌟</div>
+                        <h3>Nuestro Impacto</h3>
+                        <p>Transformamos la experiencia deportiva digitalizando el proceso de reservas y promoviendo el deporte.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modales -->
+    <div id="modal-quienes" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>👥 Quiénes Somos</h2>
+                <button class="close-btn" onclick="closeModal('quienes')">×</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Somos un equipo comprometido con la innovación deportiva.</strong> Creamos Campo Finder para facilitar el acceso a canchas deportivas, optimizar reservas y promover la práctica del deporte en comunidades urbanas.</p>
+                <p>Nuestro equipo está conformado por desarrolladores, diseñadores y entusiastas del deporte que entienden las necesidades de la comunidad deportiva moderna.</p>
+                <p><strong>Nuestra misión:</strong> Democratizar el acceso a espacios deportivos a través de la tecnología, creando una comunidad deportiva más conectada y activa.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-problema" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>💡 ¿Por Qué Nacimos?</h2>
+                <button class="close-btn" onclick="closeModal('problema')">×</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Detectamos una necesidad urgente:</strong> la dificultad para reservar canchas desde el celular, con información clara sobre disponibilidad, precios, ubicación y servicios.</p>
+                <p><strong>Campo Finder</strong> nace para resolver ese problema y modernizar la forma en que las personas acceden a espacios deportivos.</p>
+                <p><strong>Antes de nuestra plataforma, los usuarios tenían que:</strong></p>
+                <ul>
+                    <li>📞 Llamar múltiples lugares para verificar disponibilidad</li>
+                    <li>🚗 Desplazarse físicamente para hacer reservas</li>
+                    <li>❌ No tener información clara sobre precios y servicios</li>
+                    <li>⏰ Enfrentar procesos de reserva lentos y complicados</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-objetivos" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🎯 Nuestros Objetivos</h2>
+                <button class="close-btn" onclick="closeModal('objetivos')">×</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Objetivo general:</strong> Centralizar la información de canchas deportivas en una plataforma digital accesible desde cualquier dispositivo.</p>
+                
+                <p><strong>Objetivos específicos:</strong></p>
+                <ul>
+                    <li>✅ Facilitar la reserva de canchas mediante una interfaz intuitiva</li>
+                    <li>📊 Mostrar disponibilidad, precios y servicios en tiempo real</li>
+                    <li>📍 Impulsar la visibilidad de espacios deportivas en zonas urbanas</li>
+                    <li>🤝 Crear una red de usuarios deportistas activos</li>
+                    <li>⚡ Optimizar el uso de instalaciones deportivas existentes</li>
+                </ul>
+
+                <p><strong>Visión a futuro:</strong> Convertirnos en la plataforma líder de reservas deportivas a nivel nacional, expandiendo nuestros servicios a múltiples deportes y ciudades.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-proyecto" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🚀 Proyecto Inicial</h2>
+                <button class="close-btn" onclick="closeModal('proyecto')">×</button>
+            </div>
+            <div class="modal-body">
+                <p>Aquí puedes ver una representación visual de nuestra aplicación y los espacios deportivos que conectamos:</p>
+                <div style="background: linear-gradient(135deg, #2e8b57, #228b22); height: 200px; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 48px; margin: 20px 0;">
+                    ⚽🏀🎾🏈
+                </div>
+                <p><strong>Nuestro proyecto inicial</strong> se enfoca en crear una plataforma digital que revolucione la manera en que las personas acceden y reservan espacios deportivos.</p>
+                <p>La plataforma incluye funcionalidades como mapas interactivos, sistema de reservas en tiempo real, gestión de pagos y valoraciones de usuarios.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-conclusion" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🌟 Nuestro Impacto</h2>
+                <button class="close-btn" onclick="closeModal('conclusion')">×</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Campo Finder</strong> transforma la experiencia deportiva al digitalizar el proceso de reserva. Mejora la gestión de instalaciones, promueve el deporte y moderniza el sistema tradicional de acceso a canchas.</p>
+                <p><strong>Con nuestra plataforma logramos:</strong></p>
+                <ul>
+                    <li>🎯 Simplificar el proceso de reserva de canchas deportivas</li>
+                    <li>📈 Aumentar la visibilidad de espacios deportivos subutilizados</li>
+                    <li>🌐 Crear una comunidad deportiva más conectada</li>
+                    <li>⚡ Optimizar el uso de instalaciones deportivas existentes</li>
+                    <li>💡 Impulsar la innovación en el sector deportivo</li>
+                </ul>
+                <p><strong>Estamos revolucionando</strong> la forma en que las personas practican deporte en entornos urbanos, creando oportunidades y facilitando el acceso a la actividad física.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Efectos del header al hacer scroll
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        function formatTiempo(segundos) {
+            const hrs = String(Math.floor(segundos / 3600)).padStart(2, '0');
+            const mins = String(Math.floor((segundos % 3600) / 60)).padStart(2, '0');
+            const secs = String(segundos % 60).padStart(2, '0');
+            return `${hrs}:${mins}:${secs}`;
+        }
+                // Si el servidor ya pasó canchas (Jinja), renderearlas aquí para evitar duplicados
+
+        // Datos de ejemplo de canchas más utilizadas
+        const canchasPopulares = [
+            {
+                nombre: "Cancha Leon de Juda",
+                tiempo_restante: 6000,
+                precio: "$80.000/hora",
+                ubicacion: "Leon 13",
+                rating: "4.8/5 ⭐",
+                reservas_mes: "120+"
+            },
+            {
+                nombre: "Punto 30",
+                tiempo_restante: 5200,
+                precio: "$45.000/hora",
+                ubicacion: "San Mateo",
+                rating: "4.6/5 ⭐",
+                reservas_mes: "95+"
+            },
+            {
+                nombre: "Cancha Teatro de los sueños",
+                tiempo_restante: 1800,
+                precio: "$115.000/hora",
+                ubicacion: "Soacha Centro",
+                rating: "4.9/5 ⭐",
+                reservas_mes: "150+"
+            }
+        ];
+
+        function cargarCanchas() {
+            // Simular carga de la API
+            setTimeout(() => {
+                mostrarCanchas(canchasPopulares);
+            }, 1000);
+        }
+
+        function mostrarCanchas(canchas) {
+            const contenedor = document.getElementById('canchas-uso');
+            
+            if (!canchas || canchas.length === 0) {
+                contenedor.innerHTML = `
+                    <div class="no-canchas">
+                        <h3>⚠️ No hay canchas activas</h3>
+                        <p>Actualmente no hay canchas en uso. ¡Sé el primero en reservar!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            contenedor.innerHTML = '';
+
+            canchas.forEach((cancha, index) => {
+                const div = document.createElement('div');
+                div.className = 'cancha-card';
+                div.innerHTML = `
+                    <h3>${cancha.nombre}</h3>
+                    <p>📍 ${cancha.ubicacion || 'Ubicación disponible'}</p>
+                    <p>💰 ${cancha.precio || 'Precio por consultar'}</p>
+                    <p>⭐ ${cancha.rating || 'Sin calificación'}</p>
+                    <p>📊 ${cancha.reservas_mes || 'N/A'} reservas este mes</p>
+                    <div class="tiempo-restante">
+                        ⏱️ Tiempo restante: <span id="cronometro-${index}">${formatTiempo(cancha.tiempo_restante)}</span>
+                    </div>
+                    <a href="/reserva?cancha=${encodeURIComponent(cancha.nombre)}" class="btn-reservar">📅 Reservar ahora</a>
+                `;
+                contenedor.appendChild(div);
+
+                // Actualizar cronómetro en tiempo real
+                let tiempo = cancha.tiempo_restante;
+                const intervalo = setInterval(() => {
+                    if (tiempo > 0) {
+                        tiempo--;
+                        const cronometroElement = document.getElementById(`cronometro-${index}`);
+                        if (cronometroElement) {
+                            cronometroElement.textContent = formatTiempo(tiempo);
+                        }
+                    } else {
+                        clearInterval(intervalo);
+                        const cronometroElement = document.getElementById(`cronometro-${index}`);
+                        if (cronometroElement) {
+                            cronometroElement.parentElement.innerHTML = '✅ <strong>¡Disponible ahora!</strong>';
+                        }
+                    }
+                }, 1000);
+            });
+        }
+
+        // Funciones para modales
+        function openModal(modalType) {
+            document.getElementById('modal-' + modalType).style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalType) {
+            document.getElementById('modal-' + modalType).style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Función para scroll suave a la sección About
+        function scrollToAbout() {
+            document.getElementById('about').scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+
+        // Cerrar modal al hacer click fuera
+        window.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // Cerrar modal con ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const modals = document.querySelectorAll('.modal');
+                modals.forEach(modal => {
+                    modal.style.display = 'none';
+                });
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // Fallback para el iframe del mapa: si no carga en 5s, mostrar imagen estática
+        (function(){
+            const iframe = document.getElementById('home-map');
+            const fallback = document.getElementById('map-fallback');
+            let loaded = false;
+            iframe.addEventListener('load', () => { loaded = true; });
+            iframe.addEventListener('error', () => { loaded = false; if (fallback) { iframe.style.display = 'none'; fallback.style.display = 'block'; } });
+            setTimeout(() => {
+                if (!loaded && fallback) {
+                    iframe.style.display = 'none';
+                    fallback.style.display = 'block';
+                }
+            }, 5000);
+        })();
+
+        // Animación de entrada para las cards
+        function animateCards() {
+            const cards = document.querySelectorAll('.cancha-card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+        }
+
+        // Cargar canchas al inicio
+        cargarCanchas();
+        
+        // Actualizar cada minuto
+        setInterval(cargarCanchas, 60000);
+
+        // Inicializar animaciones cuando se carga la página
+        window.addEventListener('load', function() {
+            // Fade in inicial
+            document.body.style.opacity = '1';
+            
+            // Animar elementos cuando entran en viewport
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animation = 'fadeInUp 0.6s ease forwards';
+                    }
+                });
+            });
+
+            // Observar elementos para animar
+            document.querySelectorAll('.info-card, .cancha-card').forEach(el => {
+                observer.observe(el);
+            });
+        });
+
+        // Efecto parallax sutil en el scroll
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('.map-container iframe');
+            if (parallax) {
+                const speed = scrolled * 0.1;
+                parallax.style.transform = `translateY(${speed}px)`;
+            }
+        });
+    </script>
+</body>
+</html>

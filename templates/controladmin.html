@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel - Campofinder</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/controladmin.css') }}">
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🏈 Campofinder</div>
+            <div>Panel de Control</div>
+        </div>
+
+        {% for cancha in canchas %}
+        <div class="cancha-info">
+            <div class="cancha-imagen">
+                <!-- Aquí podrías poner una imagen real si tienes el campo en la base de datos -->
+                <img src="https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=500&h=300&fit=crop" alt="Cancha de fútbol">
+            </div>
+            <div class="cancha-detalles">
+                <h1>{{ cancha.nombre }}</h1>
+                <p>{{ cancha.descripcion or 'Sin descripción.' }}</p>
+                <!-- Si tienes precio en la base de datos, muéstralo aquí -->
+                <div style="margin-top:8px;">
+                    <form method="POST" action="/admin/set_timer" style="display:flex; gap:8px; align-items:center;">
+                        <input type="hidden" name="cancha_id" value="{{ cancha.id }}" />
+                        <label style="font-weight:600;">Timer (min):</label>
+                        <input type="number" name="minutos" min="0" value="{{ timers[cancha.id|string] if timers and (cancha.id|string) in timers else 0 }}" style="width:100px; padding:6px; border-radius:6px; border:1px solid #ccc;" />
+                        <button type="submit" class="btn btn-iniciar">Aplicar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Sección de cronómetro y formulario para cada cancha -->
+        <div class="main-content">
+            <!-- ...cronómetro, horarios, controles... (puedes duplicar o adaptar el bloque según tu lógica) ... -->
+            <form method="POST" action="/iniciar_cronometro">
+                <input type="hidden" name="cancha" value="{{ cancha.nombre }}" />
+                <button type="submit" class="btn btn-iniciar">⏱️ Iniciar cronómetro</button>
+            </form>
+        </div>
+        {% endfor %}
+
+        <div class="main-content">
+            <!-- Sección Cronómetro -->
+            <div class="cronometro-section">
+                <h2 class="section-title">⏱️ Cronómetro</h2>
+                <div class="tiempo-display" id="tiempo-display">60:00</div>
+                
+                <div class="time-input-group">
+                    <label>⚙️ Configurar Tiempo:</label>
+                    <div class="time-inputs">
+                        <input type="number" id="minutos" class="time-input" value="60" min="0" max="999">
+                        <span>:</span>
+                        <input type="number" id="segundos" class="time-input" value="0" min="0" max="59">
+                    </div>
+                </div>
+                
+                <div class="controles">
+                    <button class="btn btn-iniciar" id="btn-iniciar">▶️ Iniciar</button>
+                    <button class="btn btn-pausar" id="btn-pausar" disabled>⏸️ Pausar</button>
+                    <button class="btn btn-reiniciar" id="btn-reiniciar">🔄 Reiniciar</button>
+                </div>
+                
+                <div class="controles">
+                    <button class="btn btn-iniciar" onclick="aplicarTiempoCustom()">⚙️ Aplicar Tiempo</button>
+                </div>
+                
+                <div class="estado" id="estado">⏹️ Cronómetro Detenido</div>
+            </div>
+
+            <!-- Sección Horarios -->
+            <div class="horarios-section">
+                <h2 class="section-title">📅 Horarios</h2>
+                <div class="horarios-grid">
+                    <div class="horario disponible">08:00 - 09:00</div>
+                    <div class="horario disponible">09:00 - 10:00</div>
+                    <div class="horario ocupado">10:00 - 11:00</div>
+                    <div class="horario disponible">11:00 - 12:00</div>
+                    <div class="horario ocupado">12:00 - 13:00</div>
+                    <div class="horario disponible">13:00 - 14:00</div>
+                    <div class="horario disponible">14:00 - 15:00</div>
+                    <div class="horario ocupado">15:00 - 16:00</div>
+                    <div class="horario disponible">16:00 - 17:00</div>
+                    <div class="horario disponible">17:00 - 18:00</div>
+                    <div class="horario ocupado">18:00 - 19:00</div>
+                    <div class="horario disponible">19:00 - 20:00</div>
+                    <div class="horario disponible">20:00 - 21:00</div>
+                    <div class="horario disponible">21:00 - 22:00</div>
+                </div>
+                
+                <div class="horario-controls">
+                    <button class="btn btn-iniciar" onclick="liberarHorario()">✅ Liberar</button>
+                    <button class="btn btn-pausar" onclick="bloquearHorario()">🔒 Bloquear</button>
+                </div>
+
+                <!-- Form para bloquear/desbloquear horarios desde el admin -->
+                <div style="margin-top:20px; padding:12px; border-top:1px solid #eee;">
+                    <h3>Bloquear/Desbloquear horario manual</h3>
+                    <form method="POST" action="/admin/block_slot" style="display:flex; gap:8px; align-items:center;">
+                        <input type="hidden" name="cancha_id" value="{{ cancha.id if cancha is defined else '' }}" />
+                        <label>Fecha:</label>
+                        <input type="date" name="fecha" required />
+                        <label>Horario (ej. 18:00 - 19:00):</label>
+                        <input type="text" name="horario" required />
+                        <button type="submit" class="btn btn-iniciar">Bloquear</button>
+                    </form>
+                    <form method="POST" action="/admin/unblock_slot" style="display:flex; gap:8px; align-items:center; margin-top:8px;">
+                        <input type="hidden" name="cancha_id" value="{{ cancha.id if cancha is defined else '' }}" />
+                        <label>Fecha:</label>
+                        <input type="date" name="fecha" required />
+                        <label>Horario:</label>
+                        <input type="text" name="horario" required />
+                        <button type="submit" class="btn btn-pausar">Desbloquear</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Sección Marcador -->
+            <div class="marcador-section">
+                <h2 class="section-title marcador-title">🏆 Marcador</h2>
+                
+                <div class="marcador-display">
+                    <div class="equipos">
+                        <div class="equipo">
+                            <div class="equipo-nombre">
+                                <input type="text" id="equipo1" placeholder="Equipo 1" value="Local">
+                            </div>
+                            <div class="score" id="score1">0</div>
+                            <div class="score-controls">
+                                <button class="score-btn plus" onclick="cambiarScore('equipo1', 1)">+</button>
+                                <button class="score-btn minus" onclick="cambiarScore('equipo1', -1)">-</button>
+                            </div>
+                        </div>
+                        
+                        <div class="vs">VS</div>
+                        
+                        <div class="equipo">
+                            <div class="equipo-nombre">
+                                <input type="text" id="equipo2" placeholder="Equipo 2" value="Visitante">
+                            </div>
+                            <div class="score" id="score2">0</div>
+                            <div class="score-controls">
+                                <button class="score-btn plus" onclick="cambiarScore('equipo2', 1)">+</button>
+                                <button class="score-btn minus" onclick="cambiarScore('equipo2', -1)">-</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="marcador-controls">
+                    <button class="btn btn-marcador" onclick="reiniciarMarcador()">🔄 Reiniciar</button>
+                    <button class="btn btn-marcador" onclick="intercambiarEquipos()">🔄 Intercambiar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- Users management -->
+        <div style="margin-top:30px; padding:20px; background:#fff; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.06);">
+            <h2>🔐 Usuarios</h2>
+            <p>Lista de usuarios registrados (administradores pueden agregar nuevos).</p>
+            <!-- Creator link removed from controladmin (moved to home) -->
+            <div style="margin-top:12px;">
+                <table style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr style="text-align:left; border-bottom:1px solid #eee;">
+                            <th>ID</th><th>Nombre</th><th>Correo</th><th>Rol</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for u in users %}
+                        <tr>
+                            <td>{{ u.id }}</td>
+                            <td>{{ u.nombre }}</td>
+                            <td>{{ u.correo }}</td>
+                            <td>{{ u.rol }}</td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="4">No hay usuarios</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="margin-top:18px;">
+                <h3>Agregar usuario</h3>
+                <form method="POST" action="/admin/add_user" style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                    <input type="text" name="nombre" placeholder="Nombre" required style="padding:8px; border-radius:6px; border:1px solid #ccc;" />
+                    <input type="email" name="correo" placeholder="correo@ejemplo.com" required style="padding:8px; border-radius:6px; border:1px solid #ccc;" />
+                    <input type="password" name="contraseña" placeholder="Contraseña" required style="padding:8px; border-radius:6px; border:1px solid #ccc;" />
+                    <select name="rol" style="padding:8px; border-radius:6px; border:1px solid #ccc;">
+                        <option value="usuario">Usuario</option>
+                        <option value="administrador">Administrador</option>
+                    </select>
+                    <button type="submit" class="btn btn-iniciar">Crear Usuario</button>
+                </form>
+            </div>
+        </div>
+
+    <script>
+        // Variables del cronómetro
+        let tiempo = 60 * 60;
+        let intervalo = null;
+        let corriendo = false;
+
+        // Variables del marcador
+        let scores = { equipo1: 0, equipo2: 0 };
+
+        // Elementos del DOM
+        const tiempoDisplay = document.getElementById('tiempo-display');
+        const estado = document.getElementById('estado');
+        const btnIniciar = document.getElementById('btn-iniciar');
+        const btnPausar = document.getElementById('btn-pausar');
+        const btnReiniciar = document.getElementById('btn-reiniciar');
+
+        // Funciones del cronómetro
+        function formatTiempo(s) {
+            const m = Math.floor(s / 60);
+            return `${m.toString().padStart(2, '0')}:${(s % 60).toString().padStart(2, '0')}`;
+        }
+
+        function actualizar() {
+            tiempoDisplay.textContent = formatTiempo(tiempo);
+            
+            if (tiempo <= 0) {
+                finalizarSesion();
+                alert('⏰ ¡Tiempo terminado!');
+            }
+        }
+
+        function iniciarCronometro() {
+            if (!corriendo) {
+                corriendo = true;
+                btnIniciar.disabled = true;
+                btnPausar.disabled = false;
+                
+                estado.textContent = '▶️ Cronómetro Activo';
+                
+                intervalo = setInterval(() => {
+                    tiempo--;
+                    actualizar();
+                }, 1000);
+            }
+        }
+
+        function pausarCronometro() {
+            if (corriendo) {
+                corriendo = false;
+                clearInterval(intervalo);
+                btnIniciar.disabled = false;
+                btnPausar.disabled = true;
+                
+                estado.textContent = '⏸️ Cronómetro Pausado';
+            }
+        }
+
+        function reiniciarCronometro() {
+            if (confirm('¿Reiniciar el cronómetro?')) {
+                clearInterval(intervalo);
+                corriendo = false;
+                tiempo = parseInt(document.getElementById('minutos').value) * 60 + parseInt(document.getElementById('segundos').value || 0);
+                
+                btnIniciar.disabled = false;
+                btnPausar.disabled = true;
+                
+                estado.textContent = '🔄 Cronómetro Reiniciado';
+                actualizar();
+            }
+        }
+
+        function aplicarTiempoCustom() {
+            const minutos = parseInt(document.getElementById('minutos').value) || 60;
+            const segundos = parseInt(document.getElementById('segundos').value) || 0;
+            
+            if (corriendo && !confirm('¿Aplicar nuevo tiempo? El cronómetro se pausará.')) {
+                return;
+            }
+            
+            if (corriendo) {
+                pausarCronometro();
+            }
+            
+            tiempo = (minutos * 60) + segundos;
+            actualizar();
+            
+            alert(`⚙️ Tiempo aplicado: ${minutos}:${segundos.toString().padStart(2, '0')}`);
+        }
+
+        function finalizarSesion() {
+            clearInterval(intervalo);
+            corriendo = false;
+            
+            btnIniciar.disabled = false;
+            btnPausar.disabled = true;
+            
+            estado.textContent = '⏹️ Sesión Finalizada';
+            
+            // Reiniciar tiempo por defecto
+            tiempo = 60 * 60;
+            actualizar();
+        }
+
+        // Funciones del marcador
+        function cambiarScore(equipo, valor) {
+            scores[equipo] += valor;
+            if (scores[equipo] < 0) scores[equipo] = 0;
+            
+            document.getElementById('score1').textContent = scores.equipo1;
+            document.getElementById('score2').textContent = scores.equipo2;
+        }
+
+        function reiniciarMarcador() {
+            if (confirm('¿Reiniciar el marcador?')) {
+                scores = { equipo1: 0, equipo2: 0 };
+                document.getElementById('score1').textContent = '0';
+                document.getElementById('score2').textContent = '0';
+            }
+        }
+
+        function intercambiarEquipos() {
+            const nombre1 = document.getElementById('equipo1').value;
+            const nombre2 = document.getElementById('equipo2').value;
+            const score1 = scores.equipo1;
+            const score2 = scores.equipo2;
+            
+            document.getElementById('equipo1').value = nombre2;
+            document.getElementById('equipo2').value = nombre1;
+            
+            scores.equipo1 = score2;
+            scores.equipo2 = score1;
+            
+            document.getElementById('score1').textContent = scores.equipo1;
+            document.getElementById('score2').textContent = scores.equipo2;
+        }
+
+        // Funciones de horarios
+        function liberarHorario() {
+            const horarioSeleccionado = document.querySelector('.horario.seleccionado');
+            if (horarioSeleccionado && horarioSeleccionado.classList.contains('ocupado')) {
+                horarioSeleccionado.classList.remove('ocupado');
+                horarioSeleccionado.classList.add('disponible');
+                alert('✅ Horario liberado');
+            } else {
+                alert('⚠️ Selecciona un horario ocupado para liberar');
+            }
+        }
+
+        function bloquearHorario() {
+            const horarioSeleccionado = document.querySelector('.horario.seleccionado');
+            if (horarioSeleccionado && horarioSeleccionado.classList.contains('disponible')) {
+                horarioSeleccionado.classList.remove('disponible');
+                horarioSeleccionado.classList.add('ocupado');
+                alert('🔒 Horario bloqueado');
+            } else {
+                alert('⚠️ Selecciona un horario disponible para bloquear');
+            }
+        }
+
+        // Event listeners
+        btnIniciar.onclick = iniciarCronometro;
+        btnPausar.onclick = pausarCronometro;
+        btnReiniciar.onclick = reiniciarCronometro;
+
+        // Event listeners para horarios
+        document.querySelectorAll('.horario').forEach(h => {
+            h.onclick = function() {
+                document.querySelectorAll('.horario').forEach(x => x.classList.remove('seleccionado'));
+                this.classList.add('seleccionado');
+            };
+        });
+         
+        // Inicializar
+        actualizar();
+</script>
+
+<!-- El formulario de cronómetro ahora está dentro del bucle de canchas -->
+</body>
+</html>

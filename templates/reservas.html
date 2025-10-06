@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Cancha - Campofinder</title>
+    
+    <style>
+        /* Reset y básicos (del CSS moderno) */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            /* Nuevo fondo moderno azul/púrpura */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333; /* Color oscuro por defecto para mejor lectura */
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding-top: 100px; /* Espacio para el header fijo */
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Fijo y Moderno */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 90px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            /* Estilo de logo de texto con gradiente */
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo-img {
+            height: 50px;
+            /* Placeholder para el logo si no se carga la imagen */
+            background: #ddd; 
+            border-radius: 5px;
+        }
+
+        /* Botón Volver con el estilo moderno */
+        .back-link {
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid #667eea;
+            background: transparent;
+            color: #667eea;
+        }
+
+        .back-link:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Contenedores de contenido (Glassmorphism) */
+        .cancha-info, .horarios-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            color: white; /* Texto blanco en las tarjetas */
+        }
+
+        /* Layout de Detalles */
+        .cancha-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .cancha-imagen img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .cancha-detalles h1 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #fff, #ddd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cancha-detalles p {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .precio {
+            /* Gradiente de contraste para el precio */
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+            padding: 15px 25px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.5);
+        }
+
+        .actions-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* Botón Favorito (usa el nuevo gradiente principal) */
+        .btn-favorito {
+            padding: 12px 20px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-favorito:hover {
+            background: linear-gradient(45deg, #764ba2, #667eea);
+            transform: translateY(-2px);
+        }
+
+        .btn-favorito.favorito-activo {
+            /* Estilo para activo (verde vibrante para contraste) */
+            background: linear-gradient(45deg, #28a745, #20c997);
+        }
+
+        .main-content {
+            padding-top: 20px; 
+        }
+
+        /* Sección de Horarios */
+        .section-title {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .horarios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .horario {
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            border: 2px solid transparent;
+            font-weight: bold;
+        }
+
+        .horario.disponible {
+            border-color: #20c997; /* Verde/Teal para disponible */
+        }
+
+        .horario.ocupado {
+            border-color: #dc3545;
+            background: rgba(220, 53, 69, 0.3);
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .horario.seleccionado {
+            /* Gradiente de confirmación para seleccionado */
+            background: linear-gradient(45deg, #28a745, #20c997);
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(40, 167, 69, 0.5);
+        }
+
+        .horario.disponible:hover {
+            background: rgba(40, 167, 69, 0.3);
+        }
+
+        /* Botón de Reserva principal (usa el nuevo gradiente principal) */
+        .reservar-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .reservar-btn:hover:not(:disabled) {
+            background: linear-gradient(45deg, #764ba2, #667eea);
+            transform: translateY(-2px);
+        }
+
+        .reservar-btn:disabled {
+            background: rgba(255, 255, 255, 0.2);
+            cursor: not-allowed;
+            opacity: 0.7;
+            box-shadow: none;
+        }
+
+        /* Modal de comentarios */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            /* Fondo del modal en el nuevo gradiente */
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal h3 {
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 24px;
+            color: white;
+        }
+
+        .modal-info {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .modal-info p {
+            margin: 5px 0;
+        }
+
+        .modal textarea {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 100px;
+            margin-bottom: 20px;
+        }
+
+        .modal textarea::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .btn-modal {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-cancelar {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-confirmar {
+            /* Botón de confirmación con gradiente de éxito */
+            background: linear-gradient(45deg, #28a745, #20c997);
+        }
+
+        .btn-modal:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Notificación de éxito */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-weight: bold;
+            z-index: 1001;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.5);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                height: auto;
+                padding: 1rem;
+            }
+            .header .logo {
+                font-size: 1.5rem;
+            }
+            .header .back-link {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+            .cancha-info {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .horarios-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .actions-buttons {
+                flex-direction: column;
+            }
+
+            .modal {
+                margin: 20px;
+                width: calc(100% - 40px);
+            }
+
+            body {
+                padding-top: 100px; 
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <!-- Reemplazando el logo con el nuevo estilo y manteniendo la imagen de referencia -->
+        <div class="logo">
+            <img src="static/imagenes/Campofinderlogo.png" alt="Logo Campofinder" class="logo-img">
+            Campofinder
+        </div>
+        <!-- Usando el nuevo estilo de botón para el enlace de regreso -->
+        <a href="/" class="back-link">← Volver al inicio</a>
+    </div>
+
+    <div class="container main-content">
+        {# If multiple canchas provided, show a compact list like the catalog (sanitized) #}
+        {% if canchas|length > 1 %}
+            <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap:18px;">
+            {% for cancha in canchas %}
+                <div style="background:rgba(255,255,255,0.06); padding:12px; border-radius:10px; color:white;">
+                    <img src="{{ url_for('static', filename=cancha.imagen_url|replace(' ', '%20')) }}" alt="{{ cancha.nombre }}" style="width:100%; height:160px; object-fit:cover; border-radius:8px;" onerror="this.onerror=null;this.src='https://placehold.co/400x300/667eea/ffffff?text=No+disponible';">
+                    <h3 style="margin-top:8px;">{{ cancha.nombre }}</h3>
+                    <p style="opacity:0.9">{{ cancha.descripcion }}</p>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+                        <div class="precio" style="background:transparent; box-shadow:none;">{{ cancha.precio }}</div>
+                        <a class="btn-favorito" href="/cancha/{{ cancha.id }}">Ver / Reservar</a>
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+        {% else %}
+            {# Single cancha detailed view (keep existing layout) #}
+            {% set cancha = canchas[0] if canchas|length == 1 else None %}
+            {% if cancha %}
+            <div class="cancha-info">
+                <div class="cancha-imagen">
+                    <img id="cancha-img" src="{{ url_for('static', filename=cancha.imagen_url|replace(' ', '%20')) }}" onerror="this.onerror=null; this.src='https://placehold.co/400x300/667eea/ffffff?text=Cancha+No+Disponible';" alt="{{ cancha.nombre }}">
+                </div>
+                <div class="cancha-detalles">
+                    <h1 id="cancha-nombre">{{ cancha.nombre | default('Cancha de Fútbol 5 Premium') }}</h1>
+                    <p id="cancha-desc">{{ cancha.descripcion | default('Cancha de césped sintético de última generación, ideal para partidos rápidos y emocionantes con iluminación profesional. Incluye vestuarios de lujo.') }}</p>
+                    <div id="cancha-precio" class="precio">{{ cancha.precio | default('$25.000 COP/hora') }}</div>
+                    <div class="actions-buttons">
+                        <button id="btn-favorito" class="btn-favorito">
+                            <span id="favorito-icon">♡</span>
+                            <span id="favorito-text">Agregar a Favoritos</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% endif %}
+
+        <div class="horarios-section">
+            <h2 class="section-title">📅 Horarios Disponibles (Día de Hoy)</h2>
+            <div class="horarios-grid">
+                {%- set horarios = ['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00'] -%}
+                {% for h in horarios %}
+                    {% set ocupado = false %}
+                    {% if blocked_slots is defined and h in blocked_slots %}
+                        {% set ocupado = true %}
+                    {% endif %}
+                    <div class="horario {% if ocupado %}ocupado{% else %}disponible{% endif %}" data-hora="{{ h }}">{{ h }}-{{ (h.split(':')[0]|int + 1)|string().rjust(2,'0') }}:00</div>
+                {% endfor %}
+            </div>
+            <button id="reservar-btn" class="reservar-btn" disabled>Selecciona un horario para reservar</button>
+        </div>
+    </div>
+
+    <!-- Modal de comentarios y Notificación (Sin cambios de funcionalidad) -->
+    <div id="modal-overlay" class="modal-overlay">
+        <div class="modal">
+            <h3>Confirmar Reserva</h3>
+            <div class="modal-info">
+                <p><strong>Cancha:</strong> <span id="modal-cancha"></span></p>
+                <p><strong>Horario:</strong> <span id="modal-horario"></span></p>
+                <p><strong>Precio:</strong> <span id="modal-precio"></span></p>
+            </div>
+            <textarea id="comentarios" placeholder="Agregar comentarios adicionales (opcional)..."></textarea>
+            <div class="modal-buttons">
+                <button class="btn-modal btn-cancelar" onclick="cerrarModal()">Cancelar</button>
+                <button class="btn-modal btn-confirmar" onclick="confirmarReserva()">Confirmar Reserva</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificación -->
+    <div id="notification" class="notification"></div>
+
+    <script>
+        // Use server-provided canchas array
+        let canchas = {{ canchas|tojson|safe }} || [];
+        let reservas = []; // admin simulated data (left as-is)
+
+        function showTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+            // event may be undefined if called programmatically
+            if (window.event && window.event.target) window.event.target.classList.add('active');
+            const el = document.getElementById(tabName);
+            if (el) el.classList.add('active');
+
+            if (tabName === 'catalogo') renderCanchas();
+            if (tabName === 'admin') renderAdmin();
+        }
+
+        function renderCanchas() {
+            const grid = document.getElementById('canchas-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            canchas.forEach(cancha => {
+                const card = document.createElement('div');
+                card.className = `card ${cancha.reservada ? 'reservada' : ''}`;
+                const precio = cancha.precio || '';
+                card.innerHTML = `
+                    <img src="${location.origin + '/static/' + (cancha.imagen_url || 'imagenes/logo1.png')}" alt="${cancha.nombre}" />
+                    <div class="card-body">
+                        <h3>${cancha.nombre}</h3>
+                        <p>${cancha.descripcion || ''}</p>
+                        <span class="price">${precio}</span>
+                        ${cancha.reservada ? `
+                            <div class="timer ${cancha.tiempoRestante <= 300 ? 'terminando' : ''}" data-cancha="${cancha.id}">
+                                ⏱️ ${Math.floor((cancha.tiempoRestante||0)/60)}:${String((cancha.tiempoRestante||0)%60).padStart(2,'0')}
+                            </div>
+                            <div class="usuario-info">Reservada por: ${cancha.usuario || ''}</div>
+                        ` : `
+                            <select class="tiempo-select" id="tiempo-${cancha.id}">
+                                <option value="">Selecciona tiempo</option>
+                                <option value="1800">30 minutos</option>
+                                <option value="3600">1 hora</option>
+                                <option value="5400">1.5 horas</option>
+                                <option value="7200">2 horas</option>
+                            </select>
+                            <button class="btn-reservar" onclick="reservarCancha(${cancha.id})">Reservar Ahora</button>
+                        `}
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        async function reservarCancha(canchaId) {
+            const select = document.getElementById(`tiempo-${canchaId}`);
+            const tiempo = select ? parseInt(select.value) : null;
+            if (!tiempo) { alert('Por favor selecciona un tiempo de reserva'); return; }
+
+            // Send reserva to backend using cancha_id and a simple horario string
+            const payload = {
+                cancha_id: canchaId,
+                horario: `duracion:${tiempo}`,
+                fecha: new Date().toISOString().slice(0,10),
+                mensaje: ''
+            };
+
+            try {
+                const res = await fetch('/api/reservar', {
+                    method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload)
+                });
+                const body = await res.json();
+                if (!res.ok) throw new Error(body.error || JSON.stringify(body));
+
+                // mark on client
+                const cancha = canchas.find(c=>c.id===canchaId);
+                if (cancha) { cancha.reservada = true; cancha.tiempoRestante = tiempo; cancha.usuario = 'Usuario Demo'; }
+                alert('¡Cancha reservada!');
+                renderCanchas();
+            } catch (err) {
+                alert('Error al reservar: ' + err.message);
+            }
+        }
+
+        function renderAdmin() {
+            const container = document.getElementById('reservas-admin');
+            container.innerHTML = '';
+
+            if (!reservas || reservas.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:#666;">No hay reservas activas</p>';
+                document.getElementById('reservas-activas-count').textContent = 0;
+                return;
+            }
+
+            reservas.forEach(reserva => {
+                const minutos = Math.floor(reserva.tiempo / 60);
+                const segundos = reserva.tiempo % 60;
+
+                const card = document.createElement('div');
+                card.className = 'reserva-card';
+                card.innerHTML = `
+                    <div class="reserva-info">
+                        <h3>${reserva.cancha}</h3>
+                        <p>👤 Usuario: ${reserva.usuario}</p>
+                    </div>
+                    <div class="timer-admin ${reserva.tiempo <= 300 ? 'terminando' : ''}" data-reserva="${reserva.id}">
+                        ${minutos}:${segundos.toString().padStart(2, '0')}
+                    </div>
+                    <div class="control-buttons">
+                        <button class="btn-control btn-add" onclick="agregarTiempo(${reserva.id}, 300)" title="Agregar 5 min">+5m</button>
+                        <button class="btn-control btn-remove" onclick="restarTiempo(${reserva.id}, 300)" title="Restar 5 min">-5m</button>
+                        <button class="btn-control btn-finish" onclick="finalizarReserva(${reserva.id})" title="Finalizar">⏹️</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            document.getElementById('reservas-activas-count').textContent = reservas.length;
+        }
+
+        function agregarTiempo(reservaId, segundos) {
+            const reserva = reservas.find(r => r.id === reservaId);
+            if (reserva) { reserva.tiempo += segundos; const cancha = canchas.find(c=>c.id===reserva.canchaId); if (cancha) cancha.tiempoRestante += segundos; renderAdmin(); }
+        }
+
+        function restarTiempo(reservaId, segundos) { const reserva = reservas.find(r => r.id === reservaId); if (reserva) { reserva.tiempo = Math.max(0, reserva.tiempo - segundos); const cancha = canchas.find(c=>c.id===reserva.canchaId); if (cancha) cancha.tiempoRestante = Math.max(0, cancha.tiempoRestante - segundos); renderAdmin(); } }
+
+        function finalizarReserva(reservaId) {
+            if (!confirm('¿Seguro que deseas finalizar esta reserva?')) return;
+            const index = reservas.findIndex(r => r.id === reservaId);
+            if (index > -1) {
+                const reserva = reservas[index];
+                const cancha = canchas.find(c => c.id === reserva.canchaId);
+                if (cancha) { cancha.reservada = false; cancha.tiempoRestante = 0; cancha.usuario = ''; }
+                reservas.splice(index, 1);
+                renderAdmin();
+                alert('Reserva finalizada correctamente');
+            }
+        }
+
+        // Actualizar contadores cada segundo
+        setInterval(() => {
+            let cambios = false;
+            document.querySelectorAll('.timer[data-cancha]').forEach(timer => {
+                const canchaId = parseInt(timer.getAttribute('data-cancha'));
+                const cancha = canchas.find(c => c.id === canchaId);
+                if (cancha && cancha.tiempoRestante > 0) {
+                    cancha.tiempoRestante--;
+                    const minutos = Math.floor(cancha.tiempoRestante / 60);
+                    const segundos = cancha.tiempoRestante % 60;
+                    timer.innerHTML = `⏱️ ${minutos}:${segundos.toString().padStart(2, '0')}`;
+                    if (cancha.tiempoRestante <= 300) timer.classList.add('terminando');
+                    if (cancha.tiempoRestante === 0) cambios = true;
+                }
+            });
+
+            document.querySelectorAll('.timer-admin[data-reserva]').forEach(timer => {
+                const reservaId = parseInt(timer.getAttribute('data-reserva'));
+                const reserva = reservas.find(r => r.id === reservaId);
+                if (reserva && reserva.tiempo > 0) {
+                    reserva.tiempo--;
+                    const minutos = Math.floor(reserva.tiempo / 60);
+                    const segundos = reserva.tiempo % 60;
+                    timer.textContent = `${minutos}:${segundos.toString().padStart(2, '0')}`;
+                    if (reserva.tiempo <= 300) timer.classList.add('terminando');
+                    if (reserva.tiempo === 0) cambios = true;
+                }
+            });
+
+            if (cambios) {
+                reservas = reservas.filter(r => r.tiempo > 0);
+                canchas.forEach(c => { if (c.tiempoRestante === 0) { c.reservada = false; c.usuario = ''; } });
+                const activeTab = document.querySelector('.tab-content.active').id;
+                if (activeTab === 'catalogo') renderCanchas();
+                if (activeTab === 'admin') renderAdmin();
+            }
+        }, 1000);
+
+        // Inicial render
+        document.addEventListener('DOMContentLoaded', function(){
+            // if server passed a single cancha (we rendered single in view), open catalog tab for viewing
+            renderCanchas();
+            // If a single cancha is shown (server rendered), wire up the horario/modal handlers
+            try {
+                if ((canchas && canchas.length === 1) || document.querySelectorAll('.cancha-info').length === 1) {
+                    setupSingleCanchaPage();
+                }
+            } catch (e) {
+                console.error('setupSingleCanchaPage error', e);
+            }
+        });
+
+        // --- Single cancha helpers (modal, horario selection) ---
+        let horarioSeleccionado = null;
+
+        function setupSingleCanchaPage() {
+            // attach click handlers to horarios
+            document.querySelectorAll('.horario.disponible').forEach(horario => {
+                horario.addEventListener('click', function() {
+                    document.querySelectorAll('.horario').forEach(h => h.classList.remove('seleccionado'));
+                    this.classList.add('seleccionado');
+                    horarioSeleccionado = this.dataset.hora;
+                    const reservarBtn = document.getElementById('reservar-btn');
+                    if (reservarBtn) {
+                        reservarBtn.disabled = false;
+                        reservarBtn.textContent = `Reservar horario ${this.textContent}`;
+                    }
+                });
+            });
+
+            const reservarBtn = document.getElementById('reservar-btn');
+            if (reservarBtn) reservarBtn.addEventListener('click', function(){ if (horarioSeleccionado) mostrarModal(); });
+            document.getElementById('modal-overlay')?.addEventListener('click', function(e){ if (e.target === this) cerrarModal(); });
+        }
+
+        function mostrarModal() {
+            const modal = document.getElementById('modal-overlay');
+            const horarioElement = document.querySelector('.horario.seleccionado');
+            if (!horarioElement) return mostrarNotificacion('Selecciona un horario', 'error');
+            document.getElementById('modal-cancha').textContent = document.getElementById('cancha-nombre')?.textContent || (canchas[0] && canchas[0].nombre) || '';
+            document.getElementById('modal-horario').textContent = horarioElement.textContent;
+            document.getElementById('modal-precio').textContent = document.getElementById('cancha-precio')?.textContent || (canchas[0] && canchas[0].precio) || '';
+            modal.style.display = 'block'; document.body.style.overflow = 'hidden';
+        }
+
+        function cerrarModal() { const modal = document.getElementById('modal-overlay'); if (modal) { modal.style.display='none'; document.body.style.overflow='auto'; } }
+
+        function mostrarNotificacion(mensaje, tipo='success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = mensaje;
+            notification.style.background = (tipo === 'error') ? 'linear-gradient(45deg, #dc3545, #ff4141)' : 'linear-gradient(45deg, #28a745, #20c997)';
+            notification.classList.add('show');
+            setTimeout(()=>notification.classList.remove('show'), 3000);
+        }
+
+        async function confirmarReserva() {
+            const comentarios = document.getElementById('comentarios')?.value || '';
+            const canchaId = (canchas && canchas.length===1) ? canchas[0].id : null;
+            const horario = horarioSeleccionado;
+            if (!canchaId || !horario) return mostrarNotificacion('Faltan datos para reservar', 'error');
+            try {
+                const res = await fetch('/api/reservar', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ cancha_id: canchaId, horario: horario, fecha: new Date().toISOString().slice(0,10), mensaje: comentarios }) });
+                const body = await res.json();
+                if (!res.ok) throw new Error(body.error || JSON.stringify(body));
+                cerrarModal(); mostrarNotificacion('Reserva confirmada');
+                // mark UI
+                const horarioEl = document.querySelector('.horario.seleccionado'); if (horarioEl) { horarioEl.classList.remove('disponible','seleccionado'); horarioEl.classList.add('ocupado'); horarioEl.style.cursor='not-allowed'; }
+                const reservarBtn = document.getElementById('reservar-btn'); if (reservarBtn) { reservarBtn.disabled=true; reservarBtn.textContent='Selecciona un horario para reservar'; }
+            } catch (err) { mostrarNotificacion('Error al reservar: '+err.message, 'error'); }
+        }
+    </script>
+</body>
+</html>

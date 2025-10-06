@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Catálogo de Canchas - Campofinder</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+        :root {
+            --color-primary: #4CAF50;
+            --color-secondary: #37474F;
+            --color-background: #F4F6F8;
+            --color-card-bg: white;
+            --color-price: #FF9800;
+            --color-counter-bg: #2C3E50;
+            --color-counter-time: #00BFA5;
+            --color-libre: #FF5722;
+            --color-border: #E0E0E0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+            background: var(--color-background);
+            color: var(--color-secondary);
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            padding:18px 28px;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            padding: 28px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--color-card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+            position: relative;
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .card:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(0,0,0,0.08); }
+
+        .card img { width:100%; height:180px; object-fit:cover; display:block; }
+
+        .card-content { padding:16px 18px; display:flex; flex-direction:column; gap:12px; }
+
+        .card-content h3 { margin:0; font-size:1.15rem; color:var(--color-secondary); }
+        .card-content p { margin:0; color:#6b7b86; font-size:0.95rem; }
+
+        .card-footer { display:flex; align-items:center; justify-content:space-between; }
+        .price { color:var(--color-price); font-weight:700; }
+
+        .btn-reservar { background:var(--color-primary); color:#fff; padding:10px 14px; border-radius:8px; text-decoration:none; font-weight:700; }
+
+        .status-badge { position:absolute; top:12px; left:12px; padding:6px 10px; border-radius:999px; color:#fff; font-weight:800; font-size:0.80rem; display:none; }
+        .admin-note { display:inline-block; margin-top:8px; padding:6px 10px; background:rgba(0,0,0,0.6); color:#fff; border-radius:8px; font-size:0.85rem; }
+
+        .contador-cancha { margin-top:8px; background:var(--color-counter-bg); color:white; padding:12px; border-radius:8px; text-align:center; border:3px solid var(--color-counter-time); }
+        .contador-tiempo { font-family: 'Consolas', monospace; font-size:2rem; color:var(--color-counter-time); }
+
+        @media (max-width:720px) {
+            .grid { grid-template-columns: 1fr; padding:16px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div style="display:flex; gap:12px; align-items:center;"><div style="font-weight:800; color:var(--color-primary);">⚽</div><div style="font-weight:800;">Campofinder</div></div>
+        <nav>
+            <a href="/" style="color:#666; text-decoration:none; margin-right:12px;">Inicio</a>
+            <a href="/inicio_u" style="color:#666; text-decoration:none;">Mi cuenta</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="grid">
+            {% for cancha in canchas %}
+            <article class="card">
+                <img src="{{ url_for('static', filename=cancha['imagen_url']|replace(' ', '%20')) }}" alt="{{ cancha['nombre'] }}">
+                <div class="status-badge" id="badge-id-{{ cancha['id'] }}" style="{% if cancha.blocked_today %}background:#e53935; display:block;{% elif cancha.en_uso %}background:rgba(0,0,0,0.6); display:block;{% else %}display:none;{% endif %}">
+                    {% if cancha.blocked_today %}Bloqueado{% elif cancha.en_uso %}En uso{% else %}&nbsp;{% endif %}
+                </div>
+                <div class="card-content">
+                    <h3>{{ cancha['nombre'] }}</h3>
+                    <p>{{ cancha['descripcion'] }}</p>
+                    <div class="card-footer">
+                        <div class="price">{{ cancha['precio'] }}</div>
+                        <div>
+                            <button class="favorito-btn" onclick="toggleFavorito(this, '{{ cancha['nombre']|escape }}')" style="background:none; border:1px solid #eee; padding:8px 10px; border-radius:8px;">♡ Favorito</button>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:12px; align-items:center; justify-content:space-between; margin-top:8px;">
+                        <a class="btn-reservar" href="/reserva?cancha_id={{ cancha['id'] }}">📅 Reservar</a>
+                        <div class="contador-cancha" data-cancha-id="{{ cancha['id'] }}">
+                            <div style="font-size:0.82rem; color:#bfcfd6;">⏳ Tiempo restante:</div>
+                            <div class="contador-tiempo" id="contador-id-{{ cancha['id'] }}">00:00:00</div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </main>
+
+    <script>
+        // tiempos_canchas viene del backend con keys como 'id-<id>' => minutos
+        const tiemposCanchas = {{ tiempos_canchas|tojson }} || {};
+
+        function startCountdownForId(idKey, minutos) {
+            const display = document.getElementById('contador-' + idKey);
+            const badge = document.getElementById('badge-' + idKey);
+            if (!display) return;
+            let totalSeconds = Math.max(0, Math.floor(minutos * 60));
+
+            function tick() {
+                if (totalSeconds <= 0) {
+                    display.innerHTML = '<span style="color:var(--color-libre); font-weight:900;">¡LIBRE!</span>';
+                    if (badge) badge.style.display = 'none';
+                    // admin note
+                    if (!display.parentElement.querySelector('.admin-note')) {
+                        const n = document.createElement('div');
+                        n.className = 'admin-note';
+                        n.textContent = 'Administrado';
+                        display.parentElement.appendChild(n);
+                    }
+                    return;
+                }
+                const h = String(Math.floor(totalSeconds/3600)).padStart(2,'0');
+                const m = String(Math.floor((totalSeconds%3600)/60)).padStart(2,'0');
+                const s = String(totalSeconds%60).padStart(2,'0');
+                display.textContent = `${h}:${m}:${s}`;
+                if (badge) badge.style.display = 'block';
+                totalSeconds--;
+                setTimeout(tick, 1000);
+            }
+
+            tick();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // iniciar timers que vengan del servidor
+            for (const key in tiemposCanchas) {
+                if (!Object.prototype.hasOwnProperty.call(tiemposCanchas, key)) continue;
+                startCountdownForId(key, tiemposCanchas[key]);
+            }
+
+            // animación simple
+            document.querySelectorAll('.card').forEach((c,i) => setTimeout(()=>{c.style.opacity=1;c.style.transform='translateY(0)';}, i*80));
+        });
+
+        function toggleFavorito(btn, cancha) {
+            btn.classList.toggle('added');
+            if (btn.classList.contains('added')) {
+                btn.textContent = '♥ Favorito';
+            } else {
+                btn.textContent = '♡ Favorito';
+            }
+        }
+    </script>
+</body>
+</html>

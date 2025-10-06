@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Recuperar Contraseña</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f0f0f0; color: #333; }
+        .container { max-width: 400px; margin: 60px auto; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        h2 { text-align: center; margin-bottom: 20px; }
+        input[type="email"] { width: 100%; padding: 10px; margin-bottom: 20px; border-radius: 5px; border: 1px solid #ccc; }
+        button { width: 100%; padding: 10px; background: #12e98f; color: #fff; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        button:hover { background: #0b490b; }
+        .back-link { display: block; text-align: center; margin-top: 20px; color: #12e98f; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Recuperar Contraseña</h2>
+        <form method="POST">
+            <input type="email" name="correo" placeholder="Ingresa tu correo" required>
+            <button type="submit">Enviar instrucciones</button>
+        </form>
+  <a href="/login" class="back-link">← Volver al login</a>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul>
+              {% for message in messages %}
+                <li>{{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+    </div>
+</body>
+</html>
